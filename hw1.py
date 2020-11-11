@@ -11,6 +11,7 @@ from torchvision import transforms as trns
 import PIL.Image as Image
 
 
+# create a renset50 model with pretrained weights
 def create_nn():
     resnet = models.resnet50(pretrained=True)
     resnet.fc = nn.Linear(in_features=2048, out_features=196)

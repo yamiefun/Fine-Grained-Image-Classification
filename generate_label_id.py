@@ -1,5 +1,7 @@
 import csv
 import pandas as pd
+
+# create corresponding ids for every label in dataset
 df = pd.read_csv("training_labels.csv")
 label = df['label']
 label_set = set(label)

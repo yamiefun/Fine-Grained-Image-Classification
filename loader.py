@@ -7,6 +7,8 @@ import numpy as np
 import os
 import PIL.Image as Image
 import csv
+
+# create corresponding ids for all labels in training dataset
 df = pd.read_csv("training_labels.csv")
 label = df['label']
 files = df['id']
@@ -32,12 +34,14 @@ train_transform = trns.Compose([
 ])
 
 
+# dataloader for training set
 def default_loader(path):
     img_pil = Image.open(path).convert('RGB')
     img_tnsr = train_transform(img_pil)
     return img_tnsr
 
 
+# training dataset
 class trainset(Dataset):
     def __init__(self, loader=default_loader):
         self.images = files
