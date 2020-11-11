@@ -15,7 +15,8 @@ files = [file+".jpg" for file in files]
 files = [os.path.join("./training_data/training_data", file) for file in files]
 
 target_label = []
-label_dict = pd.read_csv("label_dict.csv", header=None, index_col=0).to_dict()[1]
+label_dict = pd.read_csv("label_dict.csv",
+                         header=None, index_col=0).to_dict()[1]
 for lbl in label:
     target_label.append(label_dict[lbl])
 
@@ -51,4 +52,3 @@ class trainset(Dataset):
 
     def __len__(self):
         return len(self.images)
-        

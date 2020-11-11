@@ -9,14 +9,18 @@ import csv
 import os
 from torchvision import transforms as trns
 import PIL.Image as Image
+
+
 def create_nn():
     resnet = models.resnet50(pretrained=True)
     resnet.fc = nn.Linear(in_features=2048, out_features=196)
     nn.init.kaiming_normal_(resnet.fc.weight, mode='fan_in')
     return resnet
 
+
 # train model
-def train(args, model, epoch, optimizer, trainloader, device, criterion=nn.CrossEntropyLoss()):
+def train(args, model, epoch, optimizer, trainloader, device,
+          criterion=nn.CrossEntropyLoss()):
     total_loss = 0.0
     total_size = 0.0
     model.train()
@@ -31,15 +35,17 @@ def train(args, model, epoch, optimizer, trainloader, device, criterion=nn.Cross
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
-            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tAverage loss: {:.6f}\tLoss: {:.6f}'.format(
-                epoch, batch_idx * len(data), len(trainloader.dataset),
-                100. * batch_idx / len(trainloader), total_loss / total_size, loss))
+            print('Train Epoch: {} [{}/{} ({:.0f}%)]\t \
+                   Average loss: {:.6f}\tLoss: {:.6f}'.format(
+                   epoch, batch_idx * len(data), len(trainloader.dataset),
+                   100. * batch_idx / len(trainloader),
+                   total_loss / total_size, loss))
 
             with open('loss.csv', 'a+', newline='') as csvfile:
                 writer = csv.writer(csvfile)
-                writer.writerow([epoch+batch_idx/len(trainloader), total_loss / total_size, loss])
+                writer.writerow([epoch+batch_idx/len(trainloader),
+                                 total_loss / total_size, loss])
     torch.save(model.state_dict(), "./checkpoints/model_{}".format(str(epoch)))
-
 
 
 # test model
@@ -54,7 +60,7 @@ def test(model):
     test_dir = "./testing_data/testing_data/"
     with open("test.csv", "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(["id","label"])
+        writer.writerow(["id", "label"])
     for filename in os.listdir(test_dir):
         img_pil = Image.open(os.path.join(test_dir, filename)).convert('RGB')
         img_tnsr = test_transform(img_pil)
@@ -72,8 +78,6 @@ def test(model):
         with open("test.csv", "a+", newline="") as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow([filename[0:6], label_id[idx]])
-
-
 
 
 # parse arguments
@@ -98,7 +102,7 @@ def main():
     net = nn.DataParallel(net, device_ids=[0, 1, 2])
     if args.gpu:
         net.to(device)
-    
+
     if args.mode == "train":
         net.load_state_dict(torch.load("./checkpoints/model_149"))
         train_data = loader.trainset()
@@ -106,8 +110,9 @@ def main():
 
         # optimizer = optim.Adam(net.parameters(), lr=args.lr)
         optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9)
-        criterion = nn.CrossEntropyLoss()
-        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.99)
+        scheduler = optim.lr_scheduler.StepLR(optimizer,
+                                              step_size=1,
+                                              gamma=0.99)
 
         for epoch in range(1, args.epoch+1):
             scheduler.step(epoch)
