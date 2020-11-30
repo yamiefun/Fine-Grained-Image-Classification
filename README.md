@@ -1,5 +1,6 @@
 # Fine-Grained Image Classification
 This repository is the project 1 for NCTU course IOC5008: Selected Topics in Visual Recognition using Deep Learning.
+[HW Spec](https://github.com/NCTU-VRDL/CS_IOC5008/tree/master/HW1)
 
 0. [Introduction](#Introduction)
 1. [How To Use](#How-To-Use)
